@@ -1,3 +1,8 @@
+Got it. Here is the revised `README.md` with LaTeX for the mathematical formulas and the "model.png" (Lena) gallery expanded by default, while the others are collapsed. This improves readability and focuses on a classic, well-known test image.
+
+---
+
+```markdown
 # An Advanced Adaptive Median Filter for Image Noise Reduction
 
 This project provides a comprehensive implementation, analysis, and optimization of an Adaptive Median Filter designed to remove high-density salt-and-pepper noise from grayscale images. It compares the adaptive filter against a classic median filter, demonstrates a massive **>30x performance optimization** using Python, NumPy, and Numba, and introduces a novel mathematical analysis to determine the filter's "breaking point."
@@ -8,7 +13,7 @@ The project culminates in an interactive Streamlit dashboard for real-time visua
 
 -   **Implementations**: Includes clear, from-scratch implementations of both the Classic and Adaptive Median Filters.
 -   **Performance Optimization**: Showcases a step-by-step optimization process, moving from slow pure Python to a highly efficient, JIT-compiled version using Numba.
--   **In-Depth Analysis**: Introduces a method to analyze a filter's effectiveness by examining the proportional growth rate of error (`d'/d`), identifying a "breaking point" where performance catastrophically degrades.
+-   **In-Depth Analysis**: Introduces a method to analyze a filter's effectiveness by examining the proportional growth rate of error ($d'/d$), identifying a "breaking point" where performance catastrophically degrades.
 -   **Interactive Dashboard**: An `app.py` built with Streamlit allows users to apply filters, adjust parameters, and explore the step-by-step filtering process on individual pixels.
 -   **Benchmarking Suite**: A full test harness (`speed_comparison.py`) measures execution time, memory usage, and CPU hotspots for all filter implementations.
 
@@ -23,16 +28,16 @@ Salt-and-pepper noise introduces random black (0) and white (255) pixels into an
 
 The classic median filter's main flaw is its fixed window size. It treats all pixels equally, which leads to blurring of edges and loss of fine detail. The adaptive median filter intelligently varies its window size to distinguish noise from actual image features.
 
-The algorithm operates in two stages at each pixel `(x, y)`:
+The algorithm operates in two stages at each pixel $(x, y)$:
 
--   **Stage A: Is the median value `Z_med` itself noise?**
-    -   It computes the min (`Z_min`), max (`Z_max`), and median (`Z_med`) values within the current window.
-    -   If `Z_min < Z_med < Z_max`, it means `Z_med` is a representative intensity value and not an outlier. The algorithm proceeds to Stage B.
-    -   If this condition is false, `Z_med` is likely salt or pepper noise. The filter increases its window size and repeats Stage A.
+-   **Stage A: Is the median value $Z_{med}$ itself noise?**
+    -   It computes the minimum ($Z_{min}$), maximum ($Z_{max}$), and median ($Z_{med}$) intensity values within the current window $S_{xy}$.
+    -   If the condition $Z_{min} < Z_{med} < Z_{max}$ is true, it means $Z_{med}$ is a representative intensity value and not an outlier. The algorithm proceeds to Stage B.
+    -   If this condition is false, $Z_{med}$ is likely salt or pepper noise. The filter increases its window size and repeats Stage A.
 
--   **Stage B: Is the center pixel `Z_xy` noise?**
-    -   If `Z_min < Z_xy < Z_max`, the center pixel `Z_xy` is not noise. The algorithm preserves this original value, **preventing image blurring**.
-    -   If this condition is false, `Z_xy` is identified as noise, and it is replaced by the non-noise median `Z_med`.
+-   **Stage B: Is the center pixel $Z_{xy}$ noise?**
+    -   If the condition $Z_{min} < Z_{xy} < Z_{max}$ is true, the center pixel $Z_{xy}$ is not noise. The algorithm preserves this original value, **preventing image blurring**.
+    -   If this condition is false, $Z_{xy}$ is identified as noise, and it is replaced by the non-noise median $Z_{med}$.
 
 This adaptive process allows the filter to apply strong filtering only where needed, preserving details in other areas.
 
@@ -51,21 +56,30 @@ A naive Python implementation of this algorithm is extremely slow due to nested 
 
 ## Deep Dive: Analytical Insights & The "Breaking Point"
 
-Beyond just implementing the filter, this project analyzes *when* a filter is effective. By plotting the **proportional growth rate of error (d'/d)** against the noise probability, we can identify the filter's "breaking point."
+Beyond just implementing the filter, this project analyzes *when* a filter is effective. The error, or normalized difference $d$, between a filtered image $I_{filt}$ and the original image $I_{orig}$ is defined as:
+
+$$
+d = \frac{1}{255} \sqrt{\frac{1}{N} \sum_{x,y} (I_{filt}(x,y) - I_{orig}(x,y))^2}
+$$
+
+By plotting the **proportional growth rate of error ($\frac{d'}{d}$)** against the noise probability $p$, we can identify the filter's "breaking point."
 
 ![Breaking Point Analysis](code/docs/images/breaking_point_analysis.png)
 
--   **Top Plot (Observation)**: The normalized error (`d`) increases at an accelerating rate as noise is added.
--   **Bottom Plot (Insight)**: The proportional growth of error (`d'/d`) reveals a distinct peak. This peak is the **breaking point**, where the filter's performance degrades most violently. This allows us to define three operational zones:
-    -   **Safe Zone (p < 0.23)**: The filter is highly effective.
-    -   **Critical Zone (p ≈ 0.23)**: The filter begins to fail catastrophically.
-    -   **Failure Zone (p > 0.23)**: The filter is overwhelmed and may do more harm than good.
+-   **Top Plot (Observation)**: The normalized error ($d$) increases at an accelerating rate as noise is added.
+-   **Bottom Plot (Insight)**: The proportional growth of error ($\frac{d'}{d}$) reveals a distinct peak. This peak is the **breaking point**, where the filter's performance degrades most violently. This allows us to define three operational zones:
+    -   **Safe Zone ($p < 0.23$)**: The filter is highly effective.
+    -   **Critical Zone ($p \approx 0.23$)**: The filter begins to fail catastrophically.
+    -   **Failure Zone ($p > 0.23$)**: The filter is overwhelmed and may do more harm than good.
 
 This analysis provides a data-driven threshold for deciding whether applying the filter is advisable.
 
 ## Results: Visual Gallery
 
 The superiority of the adaptive filter, especially at high noise densities, is evident across a wide range of images.
+
+**Gallery for model.png (Lena)**
+![Gallery for model.png](code/docs/images/gallery_results_model.png)
 
 <details>
 <summary><b>Click to view: Gallery for dog.png</b></summary>
@@ -77,12 +91,6 @@ The superiority of the adaptive filter, especially at high noise densities, is e
 <summary><b>Click to view: Gallery for bear.png</b></summary>
 
 ![Gallery for bear.png](code/docs/images/gallery_results_bear.png)
-</details>
-
-<details>
-<summary><b>Click to view: Gallery for model.png (Lena)</b></summary>
-
-![Gallery for model.png](code/docs/images/gallery_results_model.png)
 </details>
 
 <details>
@@ -138,7 +146,7 @@ The dashboard allows you to:
 ## Limitations & Future Work
 
 -   **Grayscale Only**: The current implementation is optimized for 2D grayscale images.
--   **Static Breaking Point**: The `d'/d` analysis was performed for a fixed 3x3 classic filter. This breaking point would shift for different filter sizes or types.
+-   **Static Breaking Point**: The $\frac{d'}{d}$ analysis was performed for a fixed 3x3 classic filter. This breaking point would shift for different filter sizes or types.
 -   **Noise Type**: The filters are specifically designed for salt-and-pepper noise and are not effective against other types like Gaussian noise.
 
 **Future enhancements could include:**
@@ -167,11 +175,10 @@ The dashboard allows you to:
 ```
 
 
-- Sources : 
+- Sources :
 
 [https://en.wikipedia.org/wiki/Noise_reduction]
 
 [https://en.wikipedia.org/wiki/Median_filter]
 
 [https://www.irjet.net/archives/V6/i10/IRJET-V6I10148.pdf]
-
