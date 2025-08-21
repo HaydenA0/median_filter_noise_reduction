@@ -1,8 +1,3 @@
-Got it. Here is the revised `README.md` with LaTeX for the mathematical formulas and the "model.png" (Lena) gallery expanded by default, while the others are collapsed. This improves readability and focuses on a classic, well-known test image.
-
----
-
-```markdown
 # An Advanced Adaptive Median Filter for Image Noise Reduction
 
 This project provides a comprehensive implementation, analysis, and optimization of an Adaptive Median Filter designed to remove high-density salt-and-pepper noise from grayscale images. It compares the adaptive filter against a classic median filter, demonstrates a massive **>30x performance optimization** using Python, NumPy, and Numba, and introduces a novel mathematical analysis to determine the filter's "breaking point."
